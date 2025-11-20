@@ -1,5 +1,9 @@
-if(process.env.MODE_ENV != "production"){
-require('dotenv').config();   
+if (process.env.NODE_ENV !== "production") {
+  try {
+    require("dotenv").config();
+  } catch (err) {
+    console.warn("dotenv not available; skipping local env load");
+  }
 }
 
 
@@ -39,7 +43,7 @@ const userRouter = require('./routes/user');
   // Error handling middleware
   // Starting the server
   
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
 
 app.get("/", (req, res) => {
@@ -139,9 +143,12 @@ app.use((err, req, res, next) => {
   res.render("error.ejs", { err });
   });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
-});
+if (!process.env.VERCEL) {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
-
+module.exports = app;
 
