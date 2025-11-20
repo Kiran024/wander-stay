@@ -46,9 +46,9 @@ const userRouter = require('./routes/user');
 const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
 
-app.get("/", (req, res) => {
-         res.send("Hi, i am root");
-});
+// app.get("/", (req, res) => {
+//          res.send("Hi, i am root");
+// });
 
 
 
