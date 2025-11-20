@@ -1,0 +1,318 @@
+<% layout("/layouts/boilerplate") %>
+<% const imageUrl = listing.image && listing.image.url ? listing.image.url : listing.image; %>
+<div class="listing-show container">
+  <div class="listing-show__wrapper">
+    <h3 class="listing-show__title"><%= listing.title %></h3>
+    <article class="listing-show__card">
+      <figure class="listing-show__media">
+        <img
+          src="<%= imageUrl || 'https://via.placeholder.com/960x540?text=Listing' %>"
+          alt="<%= listing.title %>"
+          class="listing-show__image"
+        />
+      </figure>
+      <div class="listing-show__body">
+        
+        <% if (listing.description) { %>
+          <p>Owned by: <%= listing.owner.username %> </p>
+          <br>
+          <p class="listing-show__description"><%= listing.description %></p>
+        <% } %>
+        <% if (typeof listing.price === "number") { %>
+          <p class="listing-show__meta">&#8377; <%= listing.price.toLocaleString("en-IN") %></p>
+        <% } %>
+        <% if (listing.location) { %>
+          <p class="listing-show__meta"><%= listing.location %></p>
+        <% } %>
+        <% if (listing.country) { %>
+          <p class="listing-show__meta"><%= listing.country %></p>
+        <% } %>
+      </div>
+     <% if(currUser && listing.owner._id.equals(currUser._id)) { %>
+      <div class="listing-show__actions">
+        <a href="/listings/<%= listing._id %>/edit" class="listing-show__btn listing-show__btn--edit">Edit</a>
+        <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="listing-show__delete-form">
+          <button type="submit" class="listing-show__btn listing-show__btn--delete">Delete</button>
+        </form>
+      </div>
+     <% } %>
+    </article>
+  </div>
+</div>
+<hr>
+
+<div class="col-8 offset-3 mb-3">
+  <% if(currUser) { %>
+  <h4>Leave a Review</h4>
+  <form method="POST" action="/listings/<%= listing._id %>/reviews" novalidate class="needs-validation">
+    <style>
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .starability-slot {
+        border: 0;
+        padding: 0;
+        margin-bottom: 1rem;
+      }
+
+      .starability-slot__stars {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        gap: 0.35rem;
+        margin-top: 0.35rem;
+      }
+
+      .starability-slot__input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .starability-slot__star {
+        cursor: pointer;
+        font-size: 2.3rem;
+        color: #c7c8ce;
+        line-height: 1;
+        transition: color 0.25s ease, transform 0.35s ease;
+      }
+
+      .starability-slot__star::before {
+        content: "\2605";
+        display: block;
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+      }
+
+      .starability-slot__star:hover,
+      .starability-slot__star:hover ~ .starability-slot__star {
+        color: #ffc83d;
+        transform: translateY(-3px);
+      }
+
+      .starability-slot__input[data-slot-star]:focus + .starability-slot__star {
+        outline: 2px dashed #89b4ff;
+        outline-offset: 4px;
+      }
+
+      .starability-slot__input[data-slot-star]:checked + .starability-slot__star,
+      .starability-slot__input[data-slot-star]:checked + .starability-slot__star ~ .starability-slot__star {
+        color: #ffc83d;
+        animation: slotReveal 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .starability-slot--display {
+        pointer-events: none;
+      }
+
+      .starability-slot__input--display {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .starability-slot__input--display:checked + .starability-slot__star,
+      .starability-slot__input--display:checked + .starability-slot__star ~ .starability-slot__star {
+        color: #ffc83d;
+        animation: slotReveal 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes slotReveal {
+        0% {
+          transform: translateY(-120%) scale(0.8);
+          opacity: 0;
+          filter: blur(1px);
+        }
+
+        60% {
+          transform: translateY(25%) scale(1.05);
+          opacity: 1;
+          filter: blur(0);
+        }
+
+        100% {
+          transform: translateY(0) scale(1);
+        }
+      }
+    </style>
+    <fieldset class="starability-slot" aria-labelledby="slot-rating-label">
+      <legend id="slot-rating-label">Rating:</legend>
+      <div class="starability-slot__stars">
+        <input type="radio" id="slot-no-rate" class="starability-slot__input" name="review[rating]" value="0" checked />
+        <label for="slot-no-rate" class="sr-only">No rating</label>
+
+        <input
+          type="radio"
+          id="slot-rate5"
+          class="starability-slot__input"
+          name="review[rating]"
+          value="5"
+          data-slot-star
+        />
+        <label for="slot-rate5" class="starability-slot__star" title="Amazing"><span class="sr-only">5 stars</span></label>
+
+        <input
+          type="radio"
+          id="slot-rate4"
+          class="starability-slot__input"
+          name="review[rating]"
+          value="4"
+          data-slot-star
+        />
+        <label for="slot-rate4" class="starability-slot__star" title="Very good"><span class="sr-only">4 stars</span></label>
+
+        <input
+          type="radio"
+          id="slot-rate3"
+          class="starability-slot__input"
+          name="review[rating]"
+          value="3"
+          data-slot-star
+        />
+        <label for="slot-rate3" class="starability-slot__star" title="Average"><span class="sr-only">3 stars</span></label>
+
+        <input
+          type="radio"
+          id="slot-rate2"
+          class="starability-slot__input"
+          name="review[rating]"
+          value="2"
+          data-slot-star
+        />
+        <label for="slot-rate2" class="starability-slot__star" title="Not good"><span class="sr-only">2 stars</span></label>
+
+        <input
+          type="radio"
+          id="slot-rate1"
+          class="starability-slot__input"
+          name="review[rating]"
+          value="1"
+          data-slot-star
+        />
+        <label for="slot-rate1" class="starability-slot__star" title="Terrible"><span class="sr-only">1 star</span></label>
+      </div>
+    </fieldset>
+    <div class="mb-3 mt-3">
+      <label for="comment" class="form-label">Comment</label>
+      <textarea name="review[comment]" id="comment" class="form-control" required></textarea>
+      <div class="invalid-feedback">Enter your comment</div>
+    </div>
+    <button type="submit" class="btn btn-dark mt-3">Submit Review</button>
+  </form>
+  <% } %>
+  <hr>
+  <% if(listing.reviews.length > 0) { %>
+  <div class="row">
+    <p><b>All Reviews</b></p> 
+  <% if (!listing.reviews.length) { %>
+    <p class="text-muted">No reviews yet. Be the first to leave one!</p>
+  <% } %>
+  <% listing.reviews.forEach(function(review) { %>
+    <div class="card col-5 ms-3 mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Rating: <%= review.rating %> / 5</h5>
+        <% if (review.comment) { %>
+          <p class="card-text"><%= review.comment %></p>
+        <% } %>
+        <% const reviewerName = review.author && review.author.username ? review.author.username : "Anonymous"; %>
+        <p class="card-text">@ <%= reviewerName %></p>
+        <% if (review.createdAt) { %>
+          <p class="card-text">
+            <small class="text-muted">
+              Reviewed on <%= new Date(review.createdAt).toDateString() %>
+            </small>
+          </p>
+        <% } %>
+        <%
+          const displayRating = Number(review.rating) || 0;
+          const starGroupName = `review-rating-${review._id}`;
+        %>
+        <fieldset
+          class="starability-slot starability-slot--display"
+          aria-label="This review is rated <%= displayRating %> out of 5 stars"
+        >
+          <legend class="sr-only">Review star rating</legend>
+          <div class="starability-slot__stars">
+            <% for (let star = 5; star >= 1; star--) { %>
+              <% const starId = `${starGroupName}-${star}`; %>
+              <input
+                type="radio"
+                id="<%= starId %>"
+                class="starability-slot__input starability-slot__input--display"
+                name="<%= starGroupName %>"
+                value="<%= star %>"
+                <%= displayRating === star ? "checked" : "" %>
+                disabled
+              />
+              <label for="<%= starId %>" class="starability-slot__star" title="<%= star %> star<%= star > 1 ? 's' : '' %>">
+                <span class="sr-only"><%= star %> star<%= star > 1 ? 's' : '' %></span>
+              </label>
+            <% } %>
+          </div>
+        </fieldset>
+        <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" class="d-inline">
+          <button type="submit" class="btn btn-sm btn-danger">Delete Review</button>
+        </form>
+        
+      </div>
+    </div>
+  <% }); %>
+  </div>
+    <% } %>  
+</div>
+<div class="col-6 offset-3  mb-3">
+        <h3>Where you'll be</h3>
+        <div id="map">
+
+        </div>
+      </div>
+      <script>
+          const mapToken = "<%= process.env.MAP_TOKEN %>";
+
+          if (!mapToken) {
+            console.error("Mapbox token missing");
+          } else {
+            mapboxgl.accessToken = mapToken;
+
+            const listingCoordinates = <%- JSON.stringify(listing.coordinate ?? null) %>;
+            const fallbackCenter = [77.2088, 28.6139];
+            const hasValidCoordinates =
+              Array.isArray(listingCoordinates) &&
+              listingCoordinates.length === 2 &&
+              listingCoordinates.every((value) => typeof value === "number" && !Number.isNaN(value));
+
+            if (!hasValidCoordinates) {
+              console.warn("Coordinate missing for this listing, using fallback center.");
+            }
+
+            const mapCenter = hasValidCoordinates ? listingCoordinates : fallbackCenter;
+
+            const map = new mapboxgl.Map({
+              container: "map",
+              style: "mapbox://styles/mapbox/streets-v12",
+              center: mapCenter,
+              zoom: 9,
+            });
+
+            new mapboxgl.Marker({ color: "#ff0000" })
+              .setLngLat(mapCenter)
+              .setPopup(
+                new mapboxgl.Popup({ offset: 25 }).setHTML(
+                  `<strong><%= listing.title %></strong><p><%= listing.location %>, <%= listing.country %></p>`
+                )
+              )
+              .addTo(map);
+            map.addControl(new mapboxgl.NavigationControl());
+          }
+        </script>    
+<script src="/js/script.js"></script>
+

@@ -1,0 +1,60 @@
+<nav class="navbar navbar-expand-lg bg-body-light border-bottom sticky-top">
+  <div class="container-fluid align-items-center gap-3">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/listings">
+      <i class="fa-regular fa-compass"></i>
+      <span class="fw-semibold">Explore</span>
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <form class="search-shell d-none d-lg-flex" action="/listings" method="GET" role="search">
+      <div class="search-chip w-100">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          class="form-control"
+          type="search"
+          name="q"
+          placeholder="Search destinations"
+          aria-label="Search destinations"
+        />
+        <button class="btn btn-search" type="submit">Search</button>
+      </div>
+    </form>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <form class="search-shell d-lg-none my-3" action="/listings" method="GET" role="search">
+        <div class="search-chip w-100">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            class="form-control"
+            type="search"
+            name="q"
+            placeholder="Search destinations"
+            aria-label="Search destinations on mobile"
+          />
+          <button class="btn btn-search" type="submit">Search</button>
+        </div>
+      </form>
+
+      <div class="navbar-nav ms-auto nav-auth">
+        <a class="nav-link fw-semibold" href="/listings/new">Airbnb your home</a>
+        <% if (currUser) { %>
+          <span class="user-chip">Hi, <%= currUser.username %></span>
+          <a class="btn btn-dark rounded-pill px-4" href="/logout">Log out</a>
+        <% } else { %>
+          <a class="btn btn-outline-dark rounded-pill px-4" href="/signup">Sign up</a>
+          <a class="btn btn-dark rounded-pill px-4" href="/login">Log in</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
